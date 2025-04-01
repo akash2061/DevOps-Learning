@@ -1,0 +1,2249 @@
+I for insert
+W for save 
+Q for quiting without saving
+dd for deleting whole line
+U for undo
+yy copy line
+p print line
+!(any no in history)  will trigger that command
+echo command >-overwrite >>-append (input redirection)
+> >> ( output redirection (cat -3 > filename))
+error redirection (2> - overwrite 2>>-append)
+error nd output ( &>-overwrite &>>-append) 
+command seprator ( ;  && ) 
+head (top 10 lines)
+tail ( bottom 10 lines) [eg - head .bashrc && tail.bashrc]
+head -n (where 'n' is any no.)
+pipeline (|) - head-20 | tail-10 [first command output is second command input]:wq
+less nd more 
+grep command (grep string filename)
+grep -i (ignorecase)
+grep - ir (ignorerecursively)
+sed 's/word/tobereplaced/' filename
+sed -i '.............' will change original file 
+sed '/redhat/d' filename - will delete word
+sed -i '.../..d' -will delete original word
+sed -n '4p' shortnote - for printing specific line 
+sed -n '2,5' filename - print the range between 2 nd 5
+mkdir -p /root/test/test1/test2(make multiple directories)
+tree - will show tree of the directory and files 
+* - all
+touch file1 file2 file3 ....(make multiple file) 
+rm -rvf file* ( will delete all file)
+ls -a (hidden files)
+two types of shell - login nd nologin shell
+3 types of user :-
+I. root uid = 0
+II. system user uid 1 - 999
+III. local user uid = 1000.....till 60000 default 
+
+----------------------------------------------------------
+
+AAA [Authentication/Authorization/Audit] (22/1/25)
+
+useradd [ it will add user to system with uid 1001]
+gid - groupid 
+id <foo> -will provide userid nd grpid
+useradd <foo> [only root can access or the user itself(foo)]
+ls /home - [will show all user]
+ls -a /home/foo [will show all hidden files in newly created user]
+cat /etc/passwd [ we can see uid & gid of all users]
+userdel <foo> -delete the user [directory will still present]
+userdel -r [will delete the directory also from home]
+ls /var/spool/mail - we can see the user file here it will only be deleted from userdel -r
+groupadd - will add new grp with gid
+groupdel - delete grp
+passwd - used to assign password to user
+only root(sudo) can change pswd
+sudo su (jump to root)
+su - foo47 [root@localhost -----> foo47@localhost]
+foo47@localhost - passwd 
+changing password in pswd foo will require more specific password although there are no restrictions on he root giving any pswd but local user have 
+primary group [
+sudo useradd A
+sudo id A
+sudo useradd B -g A
+sudo id B
+]
+
+secondary group at creating user [
+sudo groupadd D 
+sudo useradd C -G D
+sudo id C
+]
+
+useradd eg -c "This is comment we can see in vim/etc/passwd"
+sudo useradd AD -u 1471 [ start the uid with specific alloted no.]
+sudo useradd ADC -s /sbin/nologin/ [user cannot be logged in ]
+/bin/bash - login shell
+/sbin/nologin - nologin shell 
+
+
+---------------------------------------------------------
+User Modification (23/1/25)
+
+to change the secondary group of any user [
+id foo47
+uid=1001(foo47) gid=1001(foo47) groups=1001(foo47)
+sudo groupadd linuxx
+sudo usermod foo47 -G linuxx
+sudo groupadd production
+sudo usermod foo47 -g production
+id foo47
+uid=1001(foo47) gid=1005(production) groups=1005(production),1004(linuxx)
+]
+
+
+/etc/passwd
+pratibhasingh :x: 1000: 1000: Pratibha Singh:  /home/pratibhasingh:     /bin/bash
+(username ----password{hidden}----uid----gid---comment----pathofHomeDirectory-----loginShell)
+
+
+/etc/group
+linuxx:x:1004:foo47
+(groupname----password(hidden)---gid---username)
+
+to add usergroup
+sudo usermod pratibhasingh -G foo47
+usermod - user modification
+
+
+/etc/gshadow
+
+
+/etc/shadow
+9-Fields
+(
+foo47:$6$rounds=100000$U2ztsINUS1GigM2t$R0OvweDMZv17ZAvFJoLjsU.KfCtYhbDxLjNY9ZA5SOFxSb.lloK2275hC66njwB8rHQaGWMj7H85s6QyN7wO2/:20110:0:99999:7:::
+)
+username
+hashed password
+20110 1st Jan 1970 total days
+minimum days
+99999(maximum range)
+7(expiry password warning days)
+Inactive Days
+Account expiry
+reserved fields
+
+
+chage -l pratibhasingh
+
+sudo useradd EG
+sudo chage EG
+sudo chage -l  EG
+
+
+
+/etc/skel
+all ls -a files 
+when user is created the skel data is copied to new user 
+
+
+/var/spool/mail
+mail server configuration of all users 
+
+
+tty(to track terminal)
+
+
+Default configuration files
+vim /etc/default/useradd
+HOME = /mnt (can change the user home directory)
+useradd ABC
+ls /home/
+ls /mnt
+
+
+vim /etc/login.defs
+vim /etc/security/limits.conf
+
+
+--------------------------------------------------------
+
+
+
+PERMISSIONS (24/1/25)
+[Users ---- Group --- Others]
+
+for viewing permission in files 
+ls -l /etc/passwd
+
+for viewing permission in directory
+ls -ld /etc
+
+3 types of alphabetic identifying permission
+u
+g
+o
+
+ls -l newfile 
+chmod u+x newfile 
+Each permission is assigned with value
+r = 4 
+w = 2
+x = 1
+0 = no permission
+Full permission is 7
+but default is always 6 due to execution permission not permitted
+
+ls - l newfile
+chmod u-x newfile 
+chmod u-r newfile 
+chmod u-w newfile 
+chmod g+w newfile
+
+
+
+chmod 624 newfile
+chmod 000 newfile(Full permission)
+chmod 777 newfile(No permission)
+
+
+
+
+ls -l
+-rw-r--r--. 1 pratibhasingh pratibhasingh   42 Jan 23 11:43 Veg.txt
+sudo chown root Veg.txt
+-rw-r--r--. 1 root          pratibhasingh   42 Jan 23 11:43 Veg.txt
+sudo chgrp A Veg.txt
+-rw-r--r--. 1 root          A               42 Jan 23 11:43 Veg.txt
+sudo chown pratibhasingh:linuxx Veg.txt 
+-rw-r--r--. 1 pratibhasingh linuxx          42 Jan 23 11:43 Veg.txt
+sudo chown :A Veg.txt 
+-rw-r--r--. 1 pratibhasingh A               42 Jan 23 11:43 Veg.txt
+
+
+umask -0022
+drwxr-xr-x. 2 root root 6 Jan 23 22:35 demo
+777 - 022 = 755 [ Current permission ] - for directory
+666 - 000 = 666 [for permission of files-default]
+system will never give permission for execution of files 
+umask cannot set execution of files(-rw-rw-rw-)
+
+umask 0000 ( for setting umask)
+
+
+user specific umask
+vim .bashrc (set umask 0000)
+vim /etc/login.defs 
+
+/dev/null - instant delete 
+
+
+Special Permission
+->StickyBit
+o+t (owner or user = file / dir = owner /root)
+
+ 
+Suid
+Sgid
+Chattr
+
+----------------------------------------------------------
+
+SUID (25/1/25)
+
+chmod u+s /usr/sbin/useradd
+number - 4777
+directory - no use , only for file implementation
+
+
+ls -l /usr/sbin/userdel 
+-rwxr-xr-x. 1 root root 91136 Sep 13 19:00 /usr/sbin/userdel
+sudo chmod 4755 /usr/sbin/userdel
+ ls -l /usr/sbin/userdel 
+-rwsr-xr-x. 1 root root 91136 Sep 13 19:00 /usr/sbin/userdel
+
+
+sudo chmod 4755 /usr/sbin/userdel ( for giving suid)
+sudo chmod 0755 /usr/sbin/userdel ( for sticky beat again)
+
+
+SGID 
+
+drwxr-xr-x.   2 root root     6 Jan 25 09:52 test
+chmod 777 test
+drwxrwxrwx.   2 root root     6 Jan 25 09:52 test
+chmod 2777 test
+drwxrwsrwx.   2 root root     6 Jan 25 09:52 test
+ll
+-rw-r--r--. 1 foo47 EG 0 Jan 23 09:36 new
+
+ ls -l /test/foo
+-rw-r--r--. 1 foo47 root 0 Jan 25 09:55 /test/foo
+
+
+
+getfacl/setfacl[ACL]
+
+getfacl newfile 
+setfacl -m u:new:rwx newfile (for user permission)
+ls -l newfile 
+-rw-rwxr--+ 1 pratibhasingh pratibhasingh 5 Jan 24 10:02 newfile
+
+
+setfacl -m g:linuxx:rwx file1 (for froup)
+group:linuxx:rwx
+ setfacl -x g:linuxx file1 (removing permission)
+
+setfacl -b file1 (remove permission and set back to default values)
+
+
+vim /etc/sudoers
+sudo visudo 
+%linuxx ALL=(ALL)       ALL
+to add in wheel group
+
+sudo usermod new -G  wheel
+user to be added in the group
+
+
+
+-------------------------------------------------------------------
+[27/1/25]
+
+
+
+chattr (to restrict deletion and editing of content of files even root cannot edit and delete it ) 
+
+chattr +i filename (to implement chattr)
+chattr -i filename ( to remove it )
+
+sudo chattr +a newfile (to apply chattr to read only file and append it)
+sudo chattr -a newfile (to remove append mode)
+generally use in log files. log files store the entry of user and action taken by them so log files are important for system )
+
+
+
+S/W installation package in redhat
+RPM
+yum
+dnf
+
+
+rpm -q packagename (if system has the package or not)
+rpm -q wget
+
+rpm -qi wget(to get all the details of package)
+
+rpm -e wget (delete the package)
+rpm -i wget /run/media/root/.....
+
+
+rpm -evh
+rpm -ivh
+
+
+----------------------------------------------------------------------------------
+
+28/1/25
+
+
+
+[AppStream]
+baseurl= file:///run/media/pratibhasingh/RHEL-9-5-0-BaseOS-x86_64/AppStream/Packages
+enabled= true
+gpgcheck= false
+gpgkey//
+name=AppStream
+
+
+[AppStream]
+baseurl= file:///..........
+enabled= true
+gpgcheck= false
+gpgkey//
+name=AppStream
+
+
+
+
+Forking - refers to creating a new process by duplicating an exisitng process 
+PPID - parent process->child process
+if process is complete but still process does not release its pid then ->Zombie process
+
+process state flags
+Running - R
+Sleeping - S
+Uninterupted Sleep - D
+Idle - I
+Kernel - K
+Stopped - T
+Zombie - Z
+Dead - X
+
+
+
+
+ps -aux
+user generated
+system generated(booting process , system D)
+
+USER
+PID
+%CPU
+%MEM
+VSZ - virtual memory size
+RSS - resident size
+TTY -?(process are not engaging terminal)
+STAT - S,R....process state code
+START - time when process start
+TIME - total cpu time
+COMMAND - command through which process generated
+
+ps->to track pid
+ps -a
+ps -l
+ps -au
+ps -ef
+
+
+
+JOBS & Session
+
+jobs
+send job background to run using ampersand &
+sleep 100& 
+
+fg %n bring the n command to foreground from background 
+to stopped any process ctrl+z
+fg %3
+sleep 1000
+^Z
+[3]+  Stopped                 sleep 1000
+
+bg %3
+resume the stopped process to running
+
+kill -l
+pstree [process tree if any parent will kill then all the child process will also kill]
+
+kill -9(kill forcefully)
+
+kill -9 1 ( it cannot overwrite or kill systemd )
+
+kill -20 to stopp any process no need to bring it foreground
+kill -18 to resume the stopped process
+
+pkill sleep* to terminate all sleep process
+
+tty- to check terminal
+pkill -t pts/2 -> to kill all the process in terminal 2 even the shell is killed
+
+pkill -p pid (to kill process from parentid)
+
+NICE value NI
+-20 Highest priority
++19 Lowest priority
+
+
+by default nice value is 0
+ps -o nice,pid,comm
+nice -n -20 sleep 9000&
+renice -n +19 592440
+
+Services : continues running progrem [process]
+Daemons : Programs [eg. systemd, sshd, httpd {ends with d}]
+
+how to manage S&D : [systemctl]
+
+Commands:
+  systemctl: manage Services
+
+  systemctl start <service> <sshd>
+  systemctl stop <service>
+  systemctl restart <service>
+  systemctl status <service>
+  systemctl disable <service>
+  systemctl enable <service>
+  systemctl enable --now <service> [also start the service at the same time]
+  systemctl reload <service>
+  systemctl mask <service>
+  systemctl unmask <service>
+
+Booting Process:
+  Power ON 
+  BIOS - Firmware [Basic Input Output System]
+  POST [Power On Self Test]
+  Bootable Device {
+    Master Boot Recorder [MBR] {
+      bootloader - GRUB/GRUB2
+      partitionTable
+      checksum
+    }
+    GRUB/GRUB2 -> initRAMfs [Compressed Image] - Constain require files to start kernal
+  }
+  Kernal
+  systemd [1st Process] {
+    1st Graphical . Target -> GUI Shell
+    2nd MultiUser Target -> Core-CLI 🤤 
+  }
+
+  systemctl isolate graphical.Target
+  init 6 [Complete Restart]
+
+reboot
+grub mode
+press e
+rd.break
+ctrl+x
+mount -o remount,rw /sysroot
+chroot sysroot
+passwd root - new password for root
+touch /.autorelabel
+exit [completely]
+
+---------------------------------------------------------------------------------
+
+Networking...!
+
+[Hardwares]
+  - Ethernet Card/LAN-Card/NIC
+  - Medium [Wired/Wireless]
+  - Network Devices [HUB/Switch/Router]
+
+[Logical]
+  - IP-Addr
+  - Ports
+  - Sockets
+
+IP address:
+  - IPv4 [32-bit] - [00000000.00000000.00000000.00000000 :: 0000 -> 11111111.11111111.11111111.11111111 :: 255.255.255.255]
+  - IPv6 [128-bit]
+
+Classes: [Waist of IP in this Method]
+  - A: 0-126       - N:H:H:H
+  - B: 128-191     - N:N:H:H
+  - C: 192-224     - N:N:N:H
+  - D: 225-239
+  - E: 240-255
+  - 127 : Loopback address
+
+Class Less Domain Routing [CIDR]:
+
+Divide by /32 will provide 1.
+/31 == 2
+/30 == 4
+/29 == 8
+/28 == 16... till /1
+
+https://cidr.xyz/
+Example: 192.168.49.0/24 -> 256 IPs assigned.
+
+Static IP 
+Dynamic IP
+
+-------------------------------------------------------
+
+SSH: 
+
+
+  501  cat /etc/selinux/config
+  502  cd
+  503  touch file200
+  504  scp file200 root@192.168.62.141:/
+  505  scp file200 root@192.168.62.141:/ -p 2222
+  506  scp file200 root@192.168.62.141:/ 
+  507  scp root@192.168.62.141:/file200
+  508  scp root@192.168.62.141:/file200 /
+  509  scp file200 root@192.168.62.107:/ 
+  510  scp -r root@localhost /root/Downloads #to send Dir & all internal contant
+  511  scp -r root@localhost:/root/Downloads #to send Dir & all internal contant
+  512  ssh -I key_name user@172.25.0.1
+  513  history
+
+
+vim /etc/ssh/sshd_config:
+allowuser <user> Connect only with user
+denyuser <user> Can't connect to user
+
+
+RCP in SSH : resume the connection after a break [ToDo...]
+
+------------------------------------------------------
+
+NTP - Network Type Protocol [server to sync time between machines]
+
+chrony:
+  - vim /etc/chrony.conf
+  - https://www.ntppool.org/en/zone/in [add a link in chrony.conf] + iburst
+  - systemctl restart chronyd
+  - chronyc sources -v
+  - timedatectl
+
+TAR: [Tape Archive] == to create Tarball
+  - -cvf [create | verbose | output-filename]
+  - 3 compression methods:
+    - gzip [gz] -z 
+    - bzip2 -j [bz2]
+    - xz -J 
+  - Extract:
+    - tar -xvf 
+    - tar -xvf -C <Location>
+    - tar -tvf [to read contant of tarball]
+
+root@8b162e5b3147 [/] # du -h etc.bac.tar etc.bac.tar.gz etc.bac.tar.bz2 etc.bac.tar.xz
+21M	etc.bac.tar
+4.6M	etc.bac.tar.gz
+3.9M	etc.bac.tar.bz2
+2.8M	etc.bac.tar.xz
+
+-------------------------------------------------------------------
+
+Find : [find -]
+  - / -size 50M 
+  - / -inum <inode number [ls -i]>
+  - / -perm 777/000 [Search on the bases of permission]
+  - / -name "Foo"
+  - / -user morningstar_2061
+  - / -type [x any type d==dir | f==file] -name "Foo"
+  - / -uid <user ID> [0 | 1000]
+
+------------------------------------------------------------------
+
+FireWall
+  - 2 types:
+    - Hardware FireWall
+    - Software FireWall
+  
+  - GUI
+    - firewall-config [GUI]
+  - CLI 
+    - firewall-cmd --list-all
+    - firewall-cmd --get-active-zone
+    - firewall-cmd --set-default-zone=home <zone-name>
+    - firewall-cmd --reload
+    - firewall-cmd --add-port=2222/tcp --permanent --zone=public
+  - conf file
+    - cd /etc/firewalld/
+    - vim firewalld.conf 
+
+--------------------------------------------------------------------
+
+Storage Management
+
+Partitions:
+    - MBR - [4 Primary Partitions || 3 Primary + 12 Logical] [Max Partition Size : 2TB] [System running BIOS based]
+    - GPT - [128 Primary Partitions] [8zibibyte - 8 million TB] [System running UEFI based] [Stores info in header & end of disk]
+
+File System:
+    - EXT2 : [16GB - 2TB] [No Journalling]
+    - EXT3 : [16GB - 2TB] [Journalling Added]
+    - EXT4 : [16GB - 16TB] [Fast Booting]
+    - XFS : [File System repairing]
+
+qemu-img create -f raw ~/Downloads/rhel.img 2G
+losetup -fP ~/Downloads/rhel.img
+losetup -a
+sudo losetup -d /dev/loop0 [delete loop]
+
+mkfs.ext4 /dev/loop0
+sudo mkdir /run/media/rhel
+sudo mount /dev/loop0 /run/media/rhel
+
+umount /run/media/rhel #Unmount!
+
+fdisk /dev/loop0
+wipefs /dev/loop0p1
+
+------------------------------------------------------------------------------------
+
+SWAP: Swappyness value
+
+{
+Aliases:
+   linux          - 83
+   swap           - 82
+   extended       - 05
+   uefi           - EF
+   raid           - FD
+   lvm            - 8E
+   linuxex        - 85
+
+Command (m for help): t
+
+Selected partition 1
+Hex code or alias (type L to list all): 82
+Changed type of partition 'Linux' to 'Linux swap / Solaris'.
+
+Command (m for help): p
+Disk /dev/loop1: 2 GiB, 2147483648 bytes, 4194304 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xe11f6908
+
+Device       Boot Start     End Sectors Size Id Type
+/dev/loop1p1       2048 2099199 2097152   1G 82 Linux swap / Solaris
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+}
+
+mkswap /dev/loop1p1
+swapon /dev/loop1p1
+swapoff /dev/loop1p1
+
+cat /proc/sys/vm/swappiness
+sudo sysctl vm.swappiness=20 [instent]
+sudo vim /etc/sysctl.conf
+sysctl -p [to check changes]
+
+o - to change signeture
+
+----------------------------------------------------------------------------------
+
+LVM : Linux Logical Volume Management
+
+PV - Physical Volume: 
+
+sudo fdisk /dev/loop1 [select lvm followed by t]
+sudo pvcreate /dev/loop1p1
+sudo pvs
+sudo pvdisplay
+
+VG - Volume Group:
+sudo vgcreate loops /dev/loop0p1
+sudo vgs
+sudo vgdisplay
+sudo vgextends loops /dev/loop1p1
+
+LVS :
+sudo lvcreate -L +508M -n loops_0 loops
+sudo lvs
+sudo lvresize -L +1020M -n /dev/loops/loops_0
+lvscan
+
+Mount Partitions:
+sudo mkfs.ext4 /dev/loops/loops_0
+sudo mkdir /run/media/aakashsoni/loops
+sudo mount /dev/loops/loops_0 /run/media/aakashsoni/loops
+
+-------------------------------------------------------------------------------------
+
+chrone:
+
+MIN HOUR DAY MONTHS WEEK-OF-THE-DAY [MON,TUE || 0-6 && 0==7] COMMAND
+
+-------------------------------------------------------------------------------------
+
+AWS-server
+
+NFS-server: 
+    nfs package [needed]
+    -p 2049
+    selinux label change
+    aws network
+    
+Created 2 virtual machine on aws server.
+
+SERVER Terminal:
+
+ssh -i ~/Downloads/redhat@47.pem ec2-user@3.110.51.125 #Permissions 0644 for '/home/aakashsoni/Downloads/redhat@47.pem' are too open.
+
+sudo ssh -i ~/Downloads/redhat@47.pem ec2-user@3.110.51.125
+yum install nfs*
+    systemctl start nfs-server
+    systemctl enable nfs-server
+    systemctl status nfs-server
+
+vim /etc/ssh/sshd_config:
+    PermitRootLogin yes
+    PasswordAuthentication yes
+
+mkdir /share
+ls -ldZ /share
+    - drwxr-xr-x. 2 root root unconfined_u:object_r:default_t:s0 6 Feb  7 05:06 /share
+semanage --help [selinux lables: To change default_t to nfs]
+
+semanage fcontext -a -t nfs_t /share
+restorecon -R /share
+    - [root@server /]# ls -ldZ /share
+    - drwxr-xr-x. 2 root root unconfined_u:object_r:nfs_t:s0 6 Feb  7 05:06 /share
+
+vim /etc/exports
+    - /share *(rw,sync,no_root_squash)
+    - client - rw: read&write to users / sync: save all changes/ no_root_squash: no sudo usage
+
+systemctl restart nfs-server
+
+[root@server ~]# exportfs -v
+/share        	<world>(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,no_root_squash,no_all_squash)
+
+CLIENT Terminal:
+yum install vim mount* -y
+
+vim /etc/fstab
+3.110.51.125:/share /receive nfs defaults 0 0
+mount -a
+    - systemctl daemon-reload [reload daemon for mount]
+
+[NOTE: Now /share & /receive are connected...!]
+
+Auto FS:
+    - yum install autofs
+    - sustemctl start/enable --now autofs [enable with --now will also start the service]
+    - vim /etc/auto.master
+    - vim /etc/auto.master.d/custom.autofs [Create a custome file for autofs]
+        - /- /etc/auto.misc [add this line in custome.autofs from /]
+    - vim /etc/auto.misc
+        - /receive -rw,soft,intr 52.66.252.57:/share [52.66.252.57 - public/private ip of server]
+    - restart autofs
+    - cd /receive
+    - df -h
+
+---------------------------------------------------------------------------------------
+
+DNS: Domain Name System & Request Flow for search for google.com:
+    - ISP : 
+    - Root NameServer
+    - TLD : Top Level Domain
+    - TTL value [at which the ISP's cache is saved for the time==TTL]
+    - DNS records :
+        - A record : stores IPv4 
+        - AAAA record : stores IPv6
+        - CNAME record : daily use [www. | in.] (Canonical Name)
+        - MX record : mail services
+        - TXT record : timepass record
+        - NS record : Name-Server record [!!important]
+        - SOA record : Stores important info about domain || zone
+    - ANS : Authorative Name Services
+
+DNS AWS Terminal:
+    - dnf install bind bind-utils vim
+    - vim /etc/named.conf [delete||clear this file using :%d]
+
+  [root@web ~]# nslookup akashsoni.store
+  Server:		172.31.0.2
+  Address:	172.31.0.2#53
+
+  Non-authoritative answer:
+  Name:	akashsoni.store
+  Address: 84.32.84.32
+
+options {
+	directory "/var/named";
+	recursion no;
+};
+zone "hello12120.zapto.org" IN {
+	type master;
+	file "hello12120_zapto_org";
+};
+
+cd /var/named
+cp -p named.empty hello12120_zapto_org  [SHOULD BE SAME AS FILE-NAME IN /etc/named.conf]
+hello12120_zapto_org file changes:
+[
+$TTL 1M
+@       IN SOA  @ rname.invalid. (
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+
+@       IN      NS      ns1.hello12120.zapto.org.
+@       IN      NS      ns2.hello12120.zapto.org.
+ns1     IN      A       52.66.146.141
+ns2     IN      A       52.66.146.141
+@       IN      A       52.66.146.141
+www     IN      CNAME   hello12120.zapto.org.
+
+]
+
+RESULT: [
+    [root@dns ~]# nslookup hello12120.zapto.org 127.0.0.1
+        Server:		127.0.0.1
+        Address:	127.0.0.1#53
+
+        Name:	hello12120.zapto.org
+        Address: 52.66.146.141
+]
+
+=== Files Used: {
+===      | 55 -  cat /etc/named.conf
+===      | 56 -  cat /var/named/hello12120_zapto_org
+=== }
+
+----------------------------------------------------------------------------------
+
+WebServers :
+    - HTTP = Hyper Text Transfer Protocol && S = Secure
+    - Hosting types:
+        - Shared Hosting
+        - Dedicated Hosting
+    - Web Server Tools:
+        - Apache HTTP Server
+        - Nginx
+        - MicroSoft IIS
+        - LiteSpeed
+        - TomCat
+    - Ports:
+        - 80 
+        - 443 [ssl]
+    - DocumentRoot = /var/www/html
+
+ WebServer Terminal:
+    - yum install httpd vim -y
+    - systemctl enable --now httpd
+    - [firewall-cmd --permanent --add-service=http && firewall-cmd --permanent --add-service=https] {if aws firewall is not added}
+    - DocumentRoot:
+        - /var/www/html
+        - [root@web /]# ls -ldZ /var/www/html
+            drwxr-xr-x. 2 root root system_u:object_r:httpd_sys_content_t:s0 6 Jan 10 18:45 /var/www/html
+        - vim /var/www/html/index.html [Create a index.html file & access it with Public-IP]
+        - [
+            [root@web html]# curl 15.206.194.146
+                <h1> Foo!!! </h1>
+            [root@web html]# curl 13.127.228.117
+                <h1>Hello World</h1>
+          ]
+        - vim /etc/httpd/conf/httpd.conf 
+        - yum install wget unzip -y
+        - wget https://www.free-css.com/assets/files/free-css-templates/download/page294/namari.zip [from free-css.com]
+        - unzip <folder>.zip & move everything to /var/www/html/
+
+            - semanage fcontext -a -t httpd_sys_content_t <file/folder-name> [NFS Command]
+            - OR setenforce 0 && getenforce
+        
+        - Add Subdomain for single IP
+            - /etc/httpd/conf.d
+            - vim /etc/httpd/conf.d/mail.conf
+                <virtualhost *:80>
+                servername foo.ddns.net
+                documentroot /var/www/html
+                </virtualhost>
+                
+                <virtualhost *:80>
+                servername mail.foo.ddns.net
+                documentroot /var/www/mail
+                </virtualhost>
+            - systemctl restart httpd
+        -  <directory /var/www/mail>
+            options indexes
+           </directory>
+
+        - listen 8080
+        - <virtualhost *:8080>
+        - Now allow port 8080 in firewall.
+
+
+Ports:
+semanage port -l
+semanage port -a -t http_port_t -p tcp 81
+
+---------- Website Security
+
+ 202  fdisk
+  203  fdisk/dev/ xvdb
+  204  fdisk /dev/xvdb
+  205  lsblk
+  206  mkswap /dev/xvdb1
+  207  vim /etc/fstab
+  208  swapon -a
+  209  swapon /dev/xvdb1
+  210  lsblk
+  211  vim /etc/fstab
+  212  lsblk
+  213  mount -a
+
+
+dnf install certbot python3-certbot-apache -y
+certbot --apache:
+  - rm -rvf /etc/httpd/conf.d/ssl.conf
+  - certbot --apache -d foo.ddns.net
+
+----------------------------------------------------------------------------------- 
+
+DataBase [Types: Relational & Non-Relationale]
+    - Relational == Structural [SQL] [Table]
+    - Non-Relational == Documentation [MongoDB] [Documents]
+
+[Base Machine Terminal]:
+sudo firewall-cmd --permanent --add-port=3306/tcp
+sudo systemctl restart firewalld
+
+sudo yum install mariadb mariadb-server
+sudo systemctl enable --now mariadb
+
+sudo mysql -u root #To run MariaDB
+
+sudo mysql_secure_installation
+sudo mysql -u root -p [-p to ask for passwords]
+
+  - show databases;
+  - create database linux;
+  - use linux;
+  - describe linux;
+  - show tables;
+  - drop database linux;
+
+Create User:
+  - create user foo@localhost identified by '1234';  #Local Access
+  - create user foo@'%' identified by '1234';  #Remote Access
+  - create user foo@'IP' identified by '1234';  #Specific IPs
+
+MariaDB [(none)]> create user foo@localhost identified by '1234';
+sudo mysql -u foo -p
+
+User Permissions:
+  - show grants for foo@localhost;
+  - grant all on <db-name>.* to foo@localhost;
+  - grant create on <db-name>.* to foo@'%'
+  - revoke all on <db-name>.* from foo@localhost;
+
+Backups:
+  - Logical Backup
+    - mkdir /backup
+    - mysqldump -u root -p redhat > /backup/backup.dump
+    - create database linux;  #Need a database to restore data!
+    - mysql -u root -p linux < /backup/backup.dump
+  - Physical Backup
+    - mariabackup --backup --target-dir /physical_backup/ --user root --password root #Automatically creates dir.
+    
+    - cd /var/lib/mysql/*
+    - rm -rvf /var/lib/mysql
+    
+    - systemctl stop mariadb
+    - mariabackup --copy-back --target-dir /physical_backup
+    - chown -R mysql:mysql /var/lib/mysql/
+
+--------------------------------------------------------------------------------------------------------
+
+Proxy - HA-Proxy:
+
+- WEB-1 && WEB-2 [machine]:
+
+yum install vim bash-completion httpd -y
+systemctl enable --now httpd
+cd /var/www/html
+vim index.html
+  - <h1>Welcome to WEB-1 || WEB-2</h1>
+systemctl restart httpd
+
+- HA-Proxy [machine]:
+
+yum install vim haproxy -y
+systemctl enable --now haproxy
+vim /etc/haproxy/haproxy.cfg
+  - frontend main
+    bind 13.232.8.216:80 #Change * to machine IP & port from 5000 to 80
+  - backend app #Add Server IPs
+    balance     roundrobin
+    server  web1 3.110.155.123:80 check 
+    server  web2 3.111.32.95:80 check
+
+-----------------------------------------------------------------------------------------------------------
+
+Word-Press:
+#   -   [WP-Machine]:
+yum install php-mysqlnd php-fpm php-json vim httpd wget
+
+#   -   [DB-Machine]:
+yum install vim  mariadb* -y
+systemctl enable --now mariadb
+
+mysql_secure_installation   [root-pass set 'r' all Y]
+mysql -u root
+create user 'wordpress_user'@'3.110.41.195' identified by 'red';    #"Add user ip==wordpress's ip"
+grant all on wordpress_DB.* to 'wordpress_user'@'3.110.41.195';
+
+use mysql; describe user; select user,host from user;     #'Query to Check User Data'
+
+#   -   [WP-Machine]:
+yum install mariadb* -y
+systemctl enable --now mariadb
+mysql -u wordpress_user -h 13.235.86.245 -p #[To test the connection]
+wget http://wordpress.org/latest.tar.gz
+
+tar -xvf latest.tar.gz
+cp -r wordpress/* /var/www/html/
+
+vim /var/www/html/wp-config.php
+  - /** The name of the database for WordPress */
+    define( 'DB_NAME', 'wordpress_DB' );
+
+    /** Database username */
+    define( 'DB_USER', 'wordpress_user' );
+
+    /** Database password */
+    define( 'DB_PASSWORD', 'red' );
+
+    /** Database hostname */
+    define( 'DB_HOST', '13.235.86.245' );
+systemctl restart httpd
+
+----------------------------------------------------------------------------------------
+
+Ansible: [YAML - Lang | Open-Source | Modules | PushBack-Methods | AgentLess || Inventory-file | Playbook | cfg-file]
+  - Control node -|----> Manage Host
+  - installation:
+    - Cloud           [C-N && M-H on cloud]
+    - Local-System    [C-N && M-H on Base-Machine]
+    - Partial         [C-N on Base-Machine && M-H on cloud]
+
+Base Machine:
+sudo yum install ansible* || yum install ansible-core
+
+vim /etc/ansible/ansible.cfg    [Main Conf File] - Not for Working.
+
+mkdir ansible
+aakashsoni@rhel [~/ansible] $ vim ansible.cfg
+
+[defaults]
+inventory= /home/aakashsoni/ansible/hosts
+remote_user= ec2-user
+ask_pass= false
+private_key_file= /home/aakashsoni/ansible/redhat@47.pem
+host_key_checking= false
+
+Now Setup Inventory:
+aakashsoni@rhel [~/ansible] $ vim hosts
+
+# Add Public IP of machines in hosts-file
+
+13.200.229.221
+15.207.249.4
+
+    # Check Connection With Servers
+aakashsoni@rhel [~/ansible] $ ansible all -m ping
+13.200.229.221 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+15.207.249.4 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+    # If the key [.pem] or IP is different:
+    aakashsoni@rhel [~/ansible] $ ansible all -m ping
+    3.110.124.59 | UNREACHABLE! => {
+        "changed": false,
+        "msg": "Failed to connect to the host via ssh: Warning: Permanently added '3.110.124.59' (ED25519) to the list of known hosts.\r\nec2-user@3.110.124.59: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "unreachable": true
+    }
+
+---------Ansible Group----------
+
+vim hosts:
+
+13.200.229.221
+15.207.249.4
+# 3.110.124.59 # Different IP - Unreachable!!!
+
+[foo]
+13.200.229.221
+
+
+aakashsoni@rhel [~/ansible] $ ansible all --list-host
+  hosts (2):
+    15.207.249.4
+    13.200.229.221
+aakashsoni@rhel [~/ansible] $ ansible foo --list-host
+  hosts (1):
+    13.200.229.221
+
+
+-----Change Host Name:
+
+add "ip name" in sudo vim /etc/hosts
+replace Ip in ansible/hosts to same name
+
+[
+aakashsoni@rhel [~/ansible] $ cat /etc/hosts 
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+15.206.205.201 Ansible-1
+15.207.249.4   Ansible-2
+aakashsoni@rhel [~/ansible] $ cat hosts 
+Ansible-1
+Ansible-2
+# 3.110.124.59 # Different IP - Unreachable!!!
+
+[foo]
+15.206.205.201
+aakashsoni@rhel [~/ansible] $ ansible all -m ping
+Ansible-2 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+15.206.205.201 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+Ansible-1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+]
+
+----------- Adhoc:
+
+[ Range ]:
+
+172.168.8.[1:230]
+redhat[1:20].com
+
+[ Children Grouping ]:
+
+[A]
+A[1:5].com
+
+[B]
+B[1:5].com
+
+[C:children]
+A
+B
+
+----------- privilege escalation
+
+[privilege_escalation]
+become= true
+become_user= root
+become_method= sudo
+become_ask_pass= false
+
+----------- Ansible Adhoc Continues:
+
+ansible all -m command -a "touch /home/ec2-user/file1"
+ansible all -m command -a "touch /file1" --become --become-user=root [IF privilege escalation is now applied]
+
+ansible all -m user -a "name=foo state=present"
+
+ansible all -m user -a "name=hello uid=1007 group=foo shell=/sbin/nologin state=present" [group for primary group]
+ansible all -m user -a "name=hello-2 uid=1008 groups=foo shell=/sbin/nologin state=present" [groups for secondary group]
+
+ansible all -m yum -a "name=httpd state=present" [install httpd in all servers]
+
+  aakashsoni@rhel [~/ansible] $ ansible all -m command -a "rpm -q httpd"
+  Ansible-1 | CHANGED | rc=0 >>
+  httpd-2.4.62-1.el9_5.2.x86_64
+  Ansible-2 | CHANGED | rc=0 >>
+  httpd-2.4.62-1.el9_5.2.x86_64
+
+ansible Ansible-1 -m file -a "path=/root/file100 state=touch" [ Cerate file in mac-1 ]
+ansible Ansible-1 -m file -a "path=/root/dir100 state=directory" [ Create Directory in mac-1]
+
+ansible all -m copy -a "src=/home/aakashsoni/ansible/xyz dest=/root"
+
+------------- Playbook:
+
+vim play.yaml
+
+---
+ - name: We will Create a User!!! [It's a Description]
+   hosts: all
+   tasks: 
+     - name: Creating User [USER-1]
+       user: 
+         name: USER-1
+         state: present
+
+
+[Checks]:
+
+ansible-playbook --syntax-check play.yaml 
+
+aakashsoni@rhel [~/ansible] $ ansible-playbook play.yaml
+
+PLAY [We will Create a User!!! [It's a Description]] *****************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [Ansible-2]
+ok: [Ansible-1]
+
+TASK [Creating User [USER-1]] ****************************************************************************************
+changed: [Ansible-1]
+changed: [Ansible-2]
+
+PLAY RECAP ***********************************************************************************************************
+Ansible-1                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+Ansible-2                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+
+----------------
+
+ansible-doc -l
+
+-------------- Multi PlayBook:
+
+vim multi-play.yml
+
+---
+  - name: using modules for - Group, User, Yum, File
+    hosts: Ansible-1
+    tasks:
+      - name: Remove httpd
+        yum:
+          name: httpd
+          state: absent
+
+      - name: Delete user
+        user:
+          name: rh-user
+          state: absent
+
+  - name: creating multiplay
+    hosts: Ansible-2
+    tasks:
+      - name: copy file & change permission
+        copy:
+          src: /foo
+          mode: '666'
+          dest: /
+
+---------------- Variables:
+
+Priority & types:
+1  - Global Scope
+2  - Play Scope
+3  - Host Scope
+
+Play Scope: 
+  - variable in PlayBook
+Eg.:
+
+---
+  - name: Creating User [Variable Testing]
+    hosts: all
+    vars:
+      - key_1: Foo-1
+      - key_2: Foo-2
+      - group_1: test-1
+      - group_2: test-2
+    tasks:
+      - name: Create User_1
+        user:
+          name: "{{ key_1 }}"
+          state: present
+      - name: Create User_2
+        user:
+          name: "{{ key_2 }}"
+          state: present
+      - name: Creating Group_1
+        group:
+          name: "{{ group_1 }}"
+          state: present
+      - name: Creating Group_2
+        group:
+          name: "{{ group_2 }}"
+          state: present
+
+Host Scope:
+
+---
+  - name: Creating User [Variable Testing]
+    hosts: all
+    vars_files:
+      - variable.yaml
+    tasks:
+      - name: Create User_1
+        user:
+          name: "{{ key_1 }}"
+          state: present
+      - name: Create User_2
+        user:
+          name: "{{ key_2 }}"
+          state: present
+      - name: Creating Group_1
+        group:
+          name: "{{ group_1 }}"
+          state: present
+      - name: Creating Group_2
+        group:
+          name: "{{ group_2 }}"
+          state: present
+
+variable.yaml:
+
+key_1: MacOS
+key_2: Linux
+group_1: Arch
+group_2: Ubuntu
+
+Global:
+
+vim arg_var.yml
+---
+  - name: Create Foo...
+    hosts: all
+    tasks:
+      - name: yum httpd
+        yum:
+          name: "{{ pkg }}"
+          state: present
+
+ansible-playbook arg_var.yml -e "pkg= httpd"
+
+--------------- hosts vars || group vars:
+
+vim test.yml
+---
+  - name: Creating user
+    hosts: all
+    tasks:
+      - name: Create Multiple user
+        user:
+          name: "{{ u }}"
+          state: present
+
+mkdir host_vars group_vars # [Special Dir]
+
+** special dir must contain files exact same as "hosts"
+
+aakashsoni@rhel [~/ansible/host_vars] $ cat Ansible-1 Ansible-2
+u: user-1
+u: user-2
+
+aakashsoni@rhel [~/ansible] $ cat group_vars/g-1 group_vars/g-2
+u: group-1-test
+u: group-2-test
+
+------- array
+
+vim array.yml:
+
+---
+  - name: Array
+    hosts: all
+    vars_files:
+      - array.yaml
+    tasks:
+      - name: Creat bulk user
+        user:
+          name: "{{ head_ing.head_line.key }}"
+          state: present
+      - name: creating group for head_line with array
+        group:
+          name: "{{ head_ing.head_line.group }}"
+          state: present
+      - name: creating user in g-1 with array
+        user:
+          name: "{{ head_ing.head_2.key }}"
+          state: present
+      - name: creating user in g-2 with array
+        user:
+          name: "{{ head_ing.head_2.group }}"
+          state: present
+
+vim array.yaml
+
+head_ing:
+  head_line:
+    key: garv
+    group: gang
+  head_2:
+    key: aditya
+    group: gg
+
+--------- register Variable:
+
+aakashsoni@rhel [~/ansible] $ cat register.yml 
+---
+  - name: testing regestir var
+    hosts: all
+    tasks:
+      - name: Testing
+        user:
+          name: V
+          state: present
+        register: result_name
+
+      - name: Show result using debug
+        debug:
+          var: result_name
+
+      - name: creating group
+        group:
+          name: CP2077
+          state: present
+        register: cp
+
+      - name: Debug Result
+        debug:
+          var: cp
+
+------------- Vault :
+
+aakashsoni@rhel [~/ansible] $ ansible-vault create vault.yml
+
+aakashsoni@rhel [~/ansible] $ cat vault.yml
+$ANSIBLE_VAULT;1.1;AES256
+37373234366634303531373133333138353765613666323364376663326661613034623066613035
+3365656637616230333764343638363837623039383763390a373434303334623061383737633662
+64323066663232626134333561333137333439333261623364303731616637656264663037396230
+6236663231383766300a303035616234663662303338323738326338653038303066393439336666
+6563
+
+aakashsoni@rhel [~/ansible] $ ansible-vault edit vault.yml
+
+aakashsoni@rhel [~/ansible] $ ansible-vault rekey vault.yml
+Vault password: 
+New Vault password: 
+Confirm New Vault password: 
+Rekey successful
+
+types to put password:
+
+1: aakashsoni@rhel [~/ansible] $ ansible-playbook test.yml --ask-vault-pass
+2: aakashsoni@rhel [~/ansible] $ ansible-playbook test.yml --vault-password-file=pass.pacman.test
+   & pass.pacman.test contains password 
+3: vault_password_file= /home/aakashsoni/ansible/pass.pacman.test
+   && pass.pacman.test contains password of vault.yml
+   && only run aakashsoni@rhel [~/ansible] $ ansible-playbook test.yml
+
+-------- Facts & Special || Magic Variables :
+
+PLAY [testing regestir var] ***************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************
+
+facts == Detail Information of machine.
+
+command:
+:: Method - I
+
+ansible <Mach-name> -m setup
+
+aakashsoni@rhel [~/ansible] $ ansible Ansible-1 -m setup
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+Ansible-1 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_all_ipv4_addresses": [
+            "172.31.15.160"
+        ],
+        "ansible_all_ipv6_addresses": [
+            "fe80::8df:ffff:fe9d:fa05"
+        ],
+        "ansible_apparmor": {
+            "status": "disabled"
+        },
+
+:: Method - II
+
+aakashsoni@rhel [~/ansible] $ cat facts.yml 
+---
+  - name: 
+    hosts: all
+    tasks:
+      - name: Testing facts
+        debug:
+          var: ansible_date_time.date
+
+:: Method - III
+
+---
+  - name:
+    hosts: all
+    tasks:
+      - name: Testing facts
+        debug:
+          var: ansible_facts.all_ipv4_addresses # if used ansible_facts no need to write ansible
+
+Now the users & pem files are different:
+
+Special Variable:
+
+aakashsoni@rhel [~/ansible/host_vars] $ pwd
+  /home/aakashsoni/ansible/host_vars
+aakashsoni@rhel [~/ansible/host_vars] $ cat Ubuntu 
+  ansible_user: ubuntu
+  ansible_ssh_private_key_file: ~/ansible/ubuntu.pem
+
+aakashsoni@rhel [~/ansible] $ ansible all -m ping
+Ansible-1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+Ansible-2 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+Ubuntu | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+aakashsoni@rhel [~/ansible] $ ls host_vars/
+Ansible-1  Ansible-2  Ubuntu
+aakashsoni@rhel [~/ansible] $ cat host_vars/Ansible-* host_vars/Ubuntu 
+#u: user-1
+#u: user-2
+ansible_user: ubuntu
+ansible_ssh_private_key_file: ~/ansible/ubuntu.pem
+aakashsoni@rhel [~/ansible] $ 
+
+-------- Loops & Conditions :
+
+to use loop "item" is the variable -
+
+aakashsoni@rhel [~/ansible] $ cat loops.yml 
+---
+  - name: Loops
+    hosts: all
+    tasks:
+      - name: Testing Loops
+        user:
+          name: "{{ item }}"
+          state: present
+        loop: 
+          - user51
+          - user47
+          - agent47
+          - ms2061
+          - ps47
+
+--------- Hashing || Multi-Loop || Dictionary :
+
+aakashsoni@rhel [~/ansible] $ cat hashing.yml
+---
+  - name: hashing
+    hosts: all
+    tasks: 
+      - name: foo
+        group: 
+          name: "{{ item }}"
+          state: present
+        loop:
+          - g1
+          - g2
+          - g3
+          - g4
+          - g5
+      - name: doo
+        user:
+          name: "{{ item.user }}"
+          groups: "{{ item.group }}"
+          state: present
+        loop:
+          - user: user61
+            group:  g1
+          - user: user-foo
+            group: g3
+
+---------- Conditions :
+
+aakashsoni@rhel [~/ansible] $ cat conditional.yml 
+---
+  - name: condition
+    hosts: all
+    tasks:
+      - name: Testing Conditions.
+        user:
+          name: user-100
+          state: present
+        when: ansible_distribution == "Ubuntu"
+
+aakashsoni@rhel [~/ansible] $ cat con1.yml 
+---
+  - name: using condition
+    hosts: all
+    tasks:
+      - name: installing nginx
+        yum: 
+          name: nginx
+          state: present
+        when: ansible_memtotal_mb > 700
+
+--------------- Handlers : it run's when changes are done [vice-versa]
+
+I:
+---
+  - name: using handlers
+    hosts: all
+    tasks:
+      - name:
+        user:
+          name: hand
+          state: present
+
+II:
+---
+  - name: using handlers
+    hosts: all
+    tasks:
+      - name:
+        user:
+          name: hand
+          state: present
+        notify: same
+    handlers:
+      - name: same
+        group:
+          name: ler
+          state: present
+
+:: Group not created since user is already created so it don't notify the handler ::
+
+---
+  - name: using handlers
+    hosts: all
+    tasks:
+      - name:
+        user:
+          name: hand
+          state: present
+        notify: same
+    handlers:
+      - name: same
+        group:
+          name: ler
+          state: present
+      - name:
+        command: "touch /root/file-x"
+
+:: Forcefully run handler && will skip error ::
+
+---
+  - name: using handlers
+    hosts: all
+    force_handlers: yes
+    tasks:
+      - name:
+        user:
+          name: hand
+          state: present
+        notify: same
+      - name:
+        yum:
+          name: foo
+          state: present
+
+    handlers:
+      - name: same
+        group:
+          name: ler
+          state: present
+      - name:
+        command: "touch /root/file-x"
+
+------------ Ignore Error :
+
+---
+  - name: using error
+    hosts: all
+    tasks:
+      - name:
+        yum:
+          name: foo
+          state: present
+        ignore_errors: yes
+      - name:
+        command: "mkdir /root/hello"
+
+------------ Tags :
+
+aakashsoni@rhel [~/ansible] $ cat tags.yml
+---
+  - name: Tags
+    hosts: all
+    tasks:
+      - name:
+        user:
+          name: tag
+          state: present
+        tags: 
+          - user
+          - hello
+
+      - name:
+        file:
+          path: /root/tags
+          state: directory
+        tags:
+          - dir
+
+aakashsoni@rhel [~/ansible] $ ansible-playbook tags.yml --tag "user"         # Single Tag
+aakashsoni@rhel [~/ansible] $ ansible-playbook tags.yml --tag "user, dir"    # Multi Tags
+
+------------- Modules - Command || Shell || Raw :
+
+command == don't support redirection |
+shell == successor of command [dependency : must contain python]
+raw == same as shell but don't require any dependency + Dangerous.
+
+aakashsoni@rhel [~/ansible] $ ansible all -m raw -a "id eve"
+
+------------- Jinja2 :
+
+aakashsoni@rhel [~/ansible] $ cat jinja.j2 
+This is my mach - 
+IP : {{ ansible_all_ipv4_addresses }}
+Distro : {{ ansible_distribution }}
+Date : {{ ansible_date_time.date }}
+DNS : {{ ansible_dns.nameservers }}
+
+aakashsoni@rhel [~/ansible] $ cat jinja_play.yml 
+---
+  - name: Testing Jinja-J2
+    hosts: all
+    tasks:
+      - name: Jinja Template
+        template: 
+          src: ~/ansible/jinja.j2
+          dest: /mnt/abc             # Can change name here
+
+::    aakashsoni@rhel [~/ansible] $ ansible-playbook  jinja_play.yml
+::    
+::    PLAY [Testing Jinja-J2] **********************************************************************************************
+::    
+::    TASK [Gathering Facts] ***********************************************************************************************
+::    ok: [Ansible-1]
+::    ok: [Ansible-2]
+::    ok: [Ubuntu]
+::    
+::    TASK [Jinja Template] ************************************************************************************************
+::    changed: [Ubuntu]
+::    changed: [Ansible-2]
+::    changed: [Ansible-1]
+::    
+::    PLAY RECAP ***********************************************************************************************************
+::    Ansible-1                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+::    Ansible-2                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+::    Ubuntu                     : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+::    
+::    aakashsoni@rhel [~/ansible] $ ansible all -m shell -a "cat /mnt/abc"
+::    Ansible-1 | CHANGED | rc=0 >>
+::    This is my mach - 
+::    IP : ['172.31.15.160']
+::    Distro : RedHat
+::    Date : 2025-02-26
+::    DNS : ['172.31.0.2']
+::    Ubuntu | CHANGED | rc=0 >>
+::    This is my mach - 
+::    IP : ['172.31.1.89']
+::    Distro : Ubuntu
+::    Date : 2025-02-26
+::    DNS : ['127.0.0.53']
+::    Ansible-2 | CHANGED | rc=0 >>
+::    This is my mach - 
+::    IP : ['172.31.1.191']
+::    Distro : RedHat
+::    Date : 2025-02-26
+::    DNS : ['172.31.0.2']
+
+------------ Jinja Loops :
+
+aakashsoni@rhel [~/ansible] $ cat jinja_loop.j2 
+{% for x in user %}
+{{ x.name }} is {{ x.role }} at techno
+{% endfor %}
+
+aakashsoni@rhel [~/ansible] $ cat jin_loop.yml
+user:
+  - name: garv
+    role: director
+  - name: aditya
+    role: Manager
+  - name: dakash
+    role: student
+  - name: manas
+    role: conductor
+
+aakashsoni@rhel [~/ansible] $ cat jinja_play_loop.yml
+---
+  - name: Jinja Loop
+    hosts: all
+    vars_files:
+      - jin_loop.yml
+    tasks: 
+      - name: Jinja Template
+        template: 
+          src: ~/ansible/jinja_loop.j2
+          dest: /root/techno
+
+--------------- Ansible galaxy :
+
+mkdir roles
+ansible-galaxy init webserver
+
+aakashsoni@rhel [~/ansible/roles/webserver] $ tree
+.
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+8 directories, 8 files
+
+cd tasks
+aakashsoni@rhel [~/ansible/roles/webserver/tasks] $ cat main.yml 
+---
+  - name: install httpd
+    yum: 
+      name: httpd
+      state: present
+  - name: start & enable
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: 
+    lineinfile:
+      path: /var/www/html/index.html
+      line: "This is for Testing Roles!!!"
+      create: yes
+      setype: httpd_sys_content_t
+  # firewall
+
+:: Using vars ::
+aakashsoni@rhel [~/ansible/roles/webserver/tasks] $ cat main.yml 
+---
+  - name: install httpd
+    yum: 
+      name: "{{ pkg }}"
+      state: present
+  - name: start & enable
+    service:
+      name: "{{ pkg }}"
+      state: started
+      enabled: yes
+  - name: 
+    lineinfile:
+      path: /var/www/html/index.html
+      line: "This is for Testing Roles!!!"
+      create: yes
+      setype: httpd_sys_content_t
+  # firewall
+
+aakashsoni@rhel [~/ansible/roles/webserver/defaults] $ cat main.yml 
+pkg: httpd
+
+aakashsoni@rhel [~/ansible] $ ls /usr/share/ansible/
+collections  plugins  roles
+
+:: ansible.cfg roles_path ::
+aakashsoni@rhel [~/ansible] $ cat ansible.cfg 
+[defaults]
+inventory= /home/aakashsoni/ansible/hosts
+remote_user= ec2-user
+ask_pass= false
+private_key_file= /home/aakashsoni/ansible/redhat@47.pem
+host_key_checking= false
+vault_password_file= /home/aakashsoni/ansible/=
+roles_path= /usr/share/ansible/roles:~/ansible/roles
+# roles_path= default:custome
+
+[privilege_escalation]
+become= true
+become_user= root
+become_method= sudo
+become_ask_pass= false
+
+---------- Install Roles - Ansible Galaxy:
+
+ansible-galaxy role install buluma.httpd
+ls /usr/share/ansible/roles/buluma.httpd  # sudo == default
+
+aakashsoni@rhel [~/ansible] $ cat ansible.cfg | grep collect
+collections_path= ~/ansible/collections
+
+ansible-galaxy collection install ansible.posix
+ansible-galaxy collection list
+
+-----------------------------------------
+
+AWS...!!!
+
+-----------------------------------------
+
+Load Balancer:
+1. Classic
+2. Application
+3. Network
+4. Getway
+
+--------------------------
+
+Auto-Scalling:
+1. Simple Auto-Scaling
+2. Dynamic Auto-Scaling
+3. Prediction Auto-Scaling
+4. Schedule Auto-Scaling
+
+Server Capacity Scale
+
+Min Cap 
+Max Cap
+Desire Cap
+min <= desire <= max
+
+------- S3: Simple - Storage - Service
+
+5TB Bucket at one time & can create 100 Buckets.
+Name Must be Globally Unique.
+
+Directory: For Organized Data Management Like Linux /
+General purpose: Can be manage like a room.
+
+------- VPC:
+
+VPC [Virtual Private Cloud]: Flow ->
+User --> Internet --> Network-Gateway [IGW] --> Region [RouteTable] --> Route --> Subnet-Associateon --> Public-Subnet --> EC2 [Instance]
+
+RouteTable : Containing Info/IPs of All the Services/Ways-to-IPs.
+
+--- Create VPC -> SubNet -> RouteTable -> IGW
+
+NAT Gateway : Provides 1-way Internet Traffic. => Put this in Public-Subnet -> Redirecting to private RouteTable.
+
+---------- IAM [Identity & Access Management]:
+
+ROOT:
+1. User
+2. Group
+3. Roles
+4. Policies
+
+-------------------------------------------------------- Holidays :
+
+Docker:
+
+    4  dnf -y install dnf-plugins-core
+    5  dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+    6  dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin vim git
+    7  systemctl enable --now docker
+    8  docker images
+    9  yum install python3 python3-pip httpd mod_ssl mod_wsgi
+
+[Deployed flask app using pdf*]
+
+--------------------
+
+Default Docker Bridge: 172.17.0.0/16
+
+Network Address Translation [ NAT ] -p 80:80
+
+:: Commands:
+
+docker run -d --name web -v /foo:/usr/share/nginx/html -p 80:80 nginx
+docker run -d --name mysql -v /foo:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=r mysql:latest
+
+docker volume create web_data
+docker run -d --name mysql -v web_data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=r mysql:latest
+docker volume ls
+docker volume rm web_data
+
+<--------Creating 2 Containers for WP & MYSQL-------------->
+
+docker volume create wp
+docker volume create db
+
+docker run -d --name web --restart always -v wp:/var/www/html -p 80:80 wordpress
+docker run -d --name db --restart always -v db:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=r mysql:latest
+
+|=====Login to db===>
+
+docker exec -it db bash
+mysql -u root -p
+create database wp_db;
+create user 'wp_user'@'%' identified by 'r'; #Login from any host/IP
+grant all on wb_db.* to 'wp_user'@'%';
+flush privileges;
+exit;
+
+|=====Now Fix WP====>
+Bla Bla Bla...
+
+<--------Use Domain as Mail---------->
+MUA = [Mail User Agent] == gmail, thunderbird, outlook
+POP's Port: 110
+IMAP's Port: 143
+
+---------------Deployment of Django App [using PDF]:
+
+1. Use Ubuntu Instance.
+2. Follow PDF.
+
+---------------To Be Continue...
+
+K8s:
+
+kubectl get pods
+kubectl get nodes
+
+kubectl run web --image nginx
+kubectl get pods -o wide
+kubectl get web
+
+kubectl describe pods web       # Detail Description of Pod
+kubectl delete pod web          # IYKYK
+
+kubectl create -f pod.yml
+kubectl exec nginx -- hostname  # Run Command inside pods
+kubectl exec nginx -it -- bash  # Run Pod's bash
+kubectl get pods --show-labels
+
+root@master:~# kubectl get pods --show-labels
+NAME    READY   STATUS    RESTARTS   AGE   LABELS
+nginx   1/1     Running   0          8s    app=newTest,env=test
+
+root@master:~# cat pod.yml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: newTest
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+
+:: Lables Testing
+
+root@master:~# kubectl get pods -l app=newTest
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          9m57s
+
+----- Replica Controller (old):
+
+root@master:~# cat rc.yml 
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+        - name: sdfdf
+          image: httpd
+
+----- Replica Set (new):
+
+Contains Selectors & Match.
+
+root@master:~# cat rs.yml 
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mywebsite
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+        - name: sdfdf
+          image: httpd
+
+-------- Deployments :
+
+kubectl create deployment web-server --replicas 20 --image nginx --dry-run=client -o yaml > nginx.yaml
+
+-------- Services :
+
+1. NodePort
+2. ClusterIP
+3. LoadBalancer
+
+-------- NameSpace :
+
+kubectl get namespace OR ns
+kubectl get pods -n kube-system # Pods of a namespace
+kubectl config get-contexts
+kubectl create ns new-namespace
+
+-------- Scheduling.
+
+-------- Taint & Tolerations :
+
+3 type of effects ->
+
+1. NoSchedule
+2. PreferNoShedule
+3. NoExecute
+
+------ Multi Container in a single Pod.
+kubectl exec -it my-pod -c container1 -- /bin/sh
+
+------------------------------------------------------------------------
+
+Jenkins :
+
+CI/CD : Continuous Integration & Continuous Deployment | Continuous Delivery
+      : Automated Steps For GitHub Code.
+
+1. Agentless
+2. Open Source
+3. Easy & Fast
+
+Jenkins Dependency: JAVA Develpoment Kit [JDK]
+Port: 8080
+
+Home Dir: cd /var/lib/jenkins/
+
+[root@JIMKIMES Jen-FreeStyle]# pwd
+/var/lib/jenkins/workspace/Jen-FreeStyle
+
+https://crontab.guru/ # Cronjob Set
+
+For Cloud SSH
+vim /etc/ssh/sshd_config.d/50-cloud-init.conf
+
+--------------------------------------------------------
+
+Project!
+
+Sonarqube ->
+Login:
+user  | pass
+admin | admin
+
+Plugins:
+JDK -> Elips
+

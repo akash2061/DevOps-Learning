@@ -1,0 +1,239 @@
+ls /boot
+lsblk
+blkid
+vim /boot/grub2/grub.cfg 
+clear 
+ps --help
+man ps 
+ps -aux
+ps -ax
+clear
+pkill -U sam 
+sleep 900
+sleep 900&
+ps -0 pid,nice,comm | grep sleep
+ps -o pid,nice,comm | grep sleep
+pkill sleep
+clear 
+pkill -p 3424
+pkill -P 3424
+ps -ef 
+cler 
+clear 
+kill -l 
+clear 
+vim /etc/yum.repos.d/
+vim /etc/yum.repos.d/yum.repo
+sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+ls /etc/yum.repos.d/
+lsblk
+clear 
+vim /etc/yum.repos.d/yum.repo
+yum repolist 
+yum repoinfo 
+clear 
+ls
+ping 
+ping localhost 
+ls
+clear 
+ps -aux
+tty
+ps -a
+ps -l 
+ps -au 
+ps
+ps -fU sam 
+clear 
+cat 
+sleep 1000
+jobs
+sleep 800&
+ls&
+jobs
+clear 
+sleep 900&
+clear 
+jobs
+firefox
+firefox&
+jobs
+fg%6
+fg %6
+ps -aux 
+ps -a
+clear 
+jobs
+fg %4
+jobs
+fg "%firefox"
+clear 
+jobs
+pkill sleep*
+jobs
+kill -9 sleep 900
+kill -9 sleep900
+bg %6
+clear 
+jobs
+sleep 10000&
+jobs
+sleep 800&
+jobs
+clear 
+fg "%sleep 800"
+bg %5
+jobs
+fg %5
+jobs
+clear 
+kill -l 
+clear 
+pstree
+clear 
+jobs
+ps 
+kill -9 5613
+jobs
+clear 
+jobs 
+ps 
+kill 5618
+kill -9 1
+kill -1
+kill -jobs
+jobs
+ps
+kill -20 5623
+jobs
+bg %3
+kill -l
+clear 
+ps -a
+ps -au
+pkill -U sam
+ps -au
+clear 
+jobs
+pkill sleep*
+clear 
+jobs
+ps
+kill -9 5644
+clear 
+sleep 8000&
+kill -20 6052
+kill -9 6052
+sleep 9000
+sleep 9000&
+jobs
+pkill sleep*
+tty
+pkill -t pts/1
+ps -au 
+ps -a
+clear
+ps -au
+ps -l 
+ps -o ppid,comm
+sleep 9000&
+ps -l 
+ps -o pid,ppid,comm,nice
+pkill -P 2810 
+pstree
+ps -o ppid
+clear 
+top
+clear 
+uptime 
+clear 
+sleep 900&
+ps -o nice,comm
+clear 
+nice -n -20 sleep 9000&
+ps -o nice,comm
+top
+nice -n -20 firefox&
+top
+renice -n +19 sleep 9000&
+clear 
+ps
+renice -n +19 6316
+renice -n +19 6361
+renice -n +19 6387
+ps -o pid,nice,comm
+history
+renice -n -20 -u sam 
+renice -n -20 -U sam 
+renice -n -20 -u sam 
+clear 
+lsblk
+clear
+lsblk
+cd /run/media/root/RHEL-9-2-0-BaseOS-aarch64/
+ls
+AppStream/
+cd AppStream/
+ls
+cd Packages/
+ls
+cd ..
+ls
+cd ..
+ls
+clear 
+cd 
+cd /run/media/root/RHEL-9-2-0-BaseOS-aarch64/
+cd 
+clear 
+rpm -q wget
+rpm -q fackbook
+rpm -qi wget 
+clear 
+rpm -e wget
+rpm -q wget 
+rpm -i wget 
+rpm -i /run/media/root/RHEL-9-2-0-BaseOS-aarch64/AppStream/Packages/wget-1.21.1-7.el9.aarch64.rpm 
+cd 
+clear 
+rpm -q wget 
+rpm -evh wget 
+rpm -ivh /run/media/root/RHEL-9-2-0-BaseOS-aarch64/AppStream/Packages/wget-1.21.1-7.el9.aarch64.rpm 
+clear 
+rpm -qa
+rpm -Uvh wget
+rpm -i /run/media/root/RHEL-9-2-0-BaseOS-aarch64/AppStream/Packages/httpd-2.4.53-11.el9_2.4.aarch64.rpm 
+clear 
+cd /etc/yum.repos.d/
+ls
+rm -rvf yum.repo 
+yum.repo
+vim yum.repo
+lsblk
+vim yum.repo
+yum repolist
+yum repoinfo 
+vim /etc/yum.repos.d/yum.repo 
+cd 
+yum remove wget 
+yum install wget -y 
+yum update 
+yum update wet 
+yum update wget 
+yum info wget 
+yum install httpd
+yum grouplist 
+clear 
+yum history
+yum clean all 
+clear 
+dnf history 
+dnf history rollback 3
+clear 
+sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+clear 
+vim /etc/yum.repos.d/yum.repo 
+clear
+history 
+:q!
+history > history.txt
