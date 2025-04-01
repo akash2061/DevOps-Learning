@@ -1,6 +1,4 @@
-# DevOps Learning 🚀 
-
-## 🚀 Full DevOps Journey  
+# DevOps Learning: A Full DevOps Journey 🚀  
 
 This repo documents my **Full DevOps** learning journey—from CI/CD to Kubernetes, Docker, Terraform, and beyond.  
 
