@@ -19,6 +19,11 @@ This repo documents my **Full DevOps** learning journey—from CI/CD to Kubernet
 
 Stay tuned as I break, fix, and automate everything! 💥😎  
 
+## Extracting Video Session Archives:
+```bash
+7z x ./path/to/video-archives.zip
+```
+
 ---
 
 **💡 Want to collaborate?** Fork, star ⭐, and let's connect!  
