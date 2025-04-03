@@ -488,6 +488,7 @@ grub mode
 press e
 rd.break
 ctrl+x
+sh
 mount -o remount,rw /sysroot
 chroot sysroot
 passwd root - new password for root
