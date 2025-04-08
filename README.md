@@ -24,4 +24,4 @@ Stay tuned as I break, fix, and automate everything! 💥😎
 
 ---
 
-**💡 Want to collaborate?** Fork, star ⭐, and let's connect!  
+**💡 Want to collaborate?** Fork, star ⭐, and let's [connect](https://www.linkedin.com/in/akash-soni-01475924b/)!  
